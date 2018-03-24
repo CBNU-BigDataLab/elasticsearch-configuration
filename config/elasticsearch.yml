@@ -1,0 +1,133 @@
+# ======================== Elasticsearch Configuration =========================
+#
+# NOTE: Elasticsearch comes with reasonable defaults for most settings.
+#       Before you set out to tweak and tune the configuration, make sure you
+#       understand what are you trying to accomplish and the consequences.
+#
+# The primary way of configuring a node is via this file. This template lists
+# the most important settings you may want to configure for a production cluster.
+#
+# Please consult the documentation for further information on configuration options:
+# https://www.elastic.co/guide/en/elasticsearch/reference/index.html
+#
+# ---------------------------------- Cluster -----------------------------------
+#
+# Use a descriptive name for your cluster:
+#
+cluster.name: Elasticsearch
+#
+# ------------------------------------ Node ------------------------------------
+#
+# Use a descriptive name for the node:
+#
+node.name: ElasticsearchN2
+#
+# Add custom attributes to the node:
+#
+node.attr.rack: R1
+#
+# ----------------------------------- Paths ------------------------------------
+#
+# Path to directory where to store the data (separate multiple locations by comma):
+#
+path.data: /home/elasticsearch/elasticsearch_data/data
+#
+# Path to log files:
+#
+path.logs: /home/elasticsearch/elasticsearch_data/log
+#
+# ----------------------------------- Memory -----------------------------------
+#
+# Lock the memory on startup:
+#
+#bootstrap.memory_lock: true
+#
+# Make sure that the heap size is set to about half the memory available
+# on the system and that the owner of the process is allowed to use this
+# limit.
+#
+# Elasticsearch performs poorly when the system is swapping the memory.
+#
+# ---------------------------------- Network -----------------------------------
+#
+# Set the bind address to a specific IP (IPv4 or IPv6):
+#
+network.host: 0.0.0.0
+#
+# Set a custom port for HTTP:
+#
+http.port: 9200
+#
+# For more information, consult the network module documentation.
+#
+# --------------------------------- Discovery ----------------------------------
+#
+# Pass an initial list of hosts to perform discovery when new node is started:
+# The default list of hosts is ["127.0.0.1", "[::1]"]
+#
+discovery.zen.ping.unicast.hosts: ["ElasticsearchN1", "ElasticsearchN2"]
+#
+# Prevent the "split brain" by configuring the majority of nodes (total number of master-eligible nodes / 2 + 1):
+#
+#discovery.zen.minimum_master_nodes: 3
+#
+# For more information, consult the zen discovery module documentation.
+#
+# ---------------------------------- Gateway -----------------------------------
+#
+# Block initial recovery after a full cluster restart until N nodes are started:
+#
+#gateway.recover_after_nodes: 3
+#
+# For more information, consult the gateway module documentation.
+#
+# ---------------------------------- Various -----------------------------------
+#
+# Require explicit names when deleting indices:
+#
+#action.destructive_requires_name: true
+
+node.master: false
+node.data: true
+
+# Run only 1 copy of ES in this machine
+node.max_local_storage_nodes: 2
+
+# Take all memory even if not using it
+#bootstrap.memory_lock: true
+
+# Number of minimum master nodes
+#discovery.zen.minium_master_nodes: 2
+
+# SEARCH - ThreadPool management for Searching
+#thread_pool.search.type: fixed
+thread_pool.search.size: 12
+#thread_pool.search.quee_size: 500
+
+# INDEX - ThreadPool management for Indexing
+#thread_pool.bulk.type: fixed  
+thread_pool.bulk.size: 4
+#thread_pool.bulk.queue_size: 1000
+
+# other nodes
+#discovery.zen.ping.multicast.enabled: false # Disable multicast discovery. It's enabled by default and must be disabled in production.  
+#discovery.zen.ping.unicast.hosts: ["ElasticsearchN1", "ElasticsearchN2"] # List of IPs of other nodes to connect with.
+
+# If Cluster is going to serve good amount of aggregation queries, Fielddata_cache size should be 30-40% of Heap
+#indices.fielddata.cache.size: 35%  
+# Filter cache is 10% by default.
+#indices.cache.filter.size: 10%  
+# The default is 20 MB/s, which is a good setting for spinning disks. If you have SSDs, you might consider increasing this to 100–200 MB/s
+#indices.store.throttle.max_bytes_per_sec: 100mb
+
+# Disable Index Deletion
+#action.disable_delete_all_indices: true
+
+# Circuit Breaker - This is very much important in order to make your cluster crashed caused by memory hungry queries.
+indices.breaker.fielddata.limit: 50%
+indices.breaker.total.limit: 60%
+
+cluster.routing.allocation.node_concurrent_recoveries: 4
+
+transport.tcp.port: 9300
+transport.host: 0.0.0.0
